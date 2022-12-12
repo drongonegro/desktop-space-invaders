@@ -5,15 +5,17 @@ let bullet
 let bullets
 let opponent
 let opponentImage
-let opponents
+let opponents = []
 let score = 0
 let comp = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
 let vel = 3
-
+let rightky = false 
+let leftky = false
 
 
 function setup() {
 	createCanvas(500,500)
+	player = new Player()
 	bullet = new Bullet()
 	bullets = []
 	opponent = new Opponent()
@@ -27,19 +29,19 @@ function preload() {
 }
 
 function mousePressed() {
-	bullets.push(new Bullet(mouseX,mouseY))
+	bullets.push(new Bullet())
 }
 
 setInterval(() => {
 	opponents.push(new Opponent())
-},1000)
+},700)
 
 function draw() {
 	background(bg)
-	player = new Player()
 	player.draw()
+	player.move()
 	player.detect()
-	
+
 	for(let i of bullets){
 		i.draw()
 		i.moveup()
@@ -59,8 +61,9 @@ function draw() {
 
 class Player{
 	constructor() {
-		this.x = mouseX - 20/2
-		this.y = mouseY - 50/2
+		this.x = 225	
+		this.y = 350
+		this.speed = 8
 	}
 
 	draw(){
@@ -79,15 +82,34 @@ class Player{
 				vel = 3
 			};
 		})
+
+		if (this.x >= 450) {
+			this.x = 450
+		}else if(this.x < 0){
+			this.x = 0
+		}
+	}
+	move() {
+		if (keyIsDown(68)) {
+			rightky = true 
+			if (rightky) {
+				this.x += this.speed
+			}
+		}else if(keyIsDown(65)){
+			leftky = true
+			if (leftky) {
+				this.x -= this.speed
+			}
+		}
 	}
 }
 
 
 
 class Bullet{
-	constructor(x,y) {
-		this.x = x - 10
-		this.y = y - 50
+	constructor() {
+		this.x = player.x + 18
+		this.y = player.y - 30
 		this.velocity = 5
 	}
 	draw() {
@@ -135,7 +157,7 @@ class Bullet{
 	
 class Opponent{
 	constructor() {
-		this.x = Math.floor(Math.random() * canvas.width - 20)
+		this.x = Math.floor(Math.random() * 500 - 20)
 		this.y = -10
 		this.velocity = vel
 	}
